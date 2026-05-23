@@ -14,13 +14,6 @@ pipeline {
             }
         }
 
-        stage('Verificar archivos') {
-            steps {
-                bat 'echo "=== Archivos en el repositorio ==="'
-                bat 'dir'
-            }
-        }
-
         stage('Construir imagen Docker') {
             steps {
                 bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
@@ -29,27 +22,20 @@ pipeline {
 
         stage('Verificar imagen') {
             steps {
-                bat 'docker images | findstr emalcap'
-            }
-        }
-
-        stage('Limpiar contenedores anteriores') {
-            steps {
-                bat "docker stop test-backend-${BUILD_NUMBER} & exit 0"
-                bat "docker rm test-backend-${BUILD_NUMBER} & exit 0"
+                bat "docker images | findstr ${DOCKER_IMAGE}"
             }
         }
 
         stage('Ejecutar contenedor de prueba') {
             steps {
                 bat "docker run -d --name test-backend-${BUILD_NUMBER} -p 3001:3000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                bat 'timeout /t 5 /nobreak'
+                bat "ping 127.0.0.1 -n 6 > nul"
             }
         }
 
-        stage('Probar contenedor') {
+        stage('Verificar contenedor corriendo') {
             steps {
-                bat 'docker ps | findstr test-backend'
+                bat "docker ps | findstr test-backend-${BUILD_NUMBER}"
             }
         }
     }
@@ -61,10 +47,10 @@ pipeline {
             cleanWs()
         }
         success {
-            echo '✅ Pipeline ejecutado exitosamente en rama jenkins!'
+            echo '✅ Pipeline EXITOSO en rama jenkins'
         }
         failure {
-            echo '❌ Pipeline falló - Revisar logs'
+            echo '❌ Pipeline falló'
         }
     }
 }
