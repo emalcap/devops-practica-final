@@ -35,8 +35,8 @@ pipeline {
 
         stage('Limpiar contenedores anteriores') {
             steps {
-                bat "docker stop test-backend-${BUILD_NUMBER} || true"
-                bat "docker rm test-backend-${BUILD_NUMBER} || true"
+                bat "docker stop test-backend-${BUILD_NUMBER} & exit 0"
+                bat "docker rm test-backend-${BUILD_NUMBER} & exit 0"
             }
         }
 
@@ -56,15 +56,15 @@ pipeline {
 
     post {
         always {
-            bat "docker stop test-backend-${BUILD_NUMBER} || true"
-            bat "docker rm test-backend-${BUILD_NUMBER} || true"
+            bat "docker stop test-backend-${BUILD_NUMBER} & exit 0"
+            bat "docker rm test-backend-${BUILD_NUMBER} & exit 0"
             cleanWs()
         }
         success {
-            echo '✅ Pipeline ejecutado exitosamente!'
+            echo '✅ Pipeline ejecutado exitosamente en rama jenkins!'
         }
         failure {
-            echo '❌ Pipeline falló'
+            echo '❌ Pipeline falló - Revisar logs'
         }
     }
 }
