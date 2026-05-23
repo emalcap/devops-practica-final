@@ -33,9 +33,16 @@ pipeline {
             }
         }
 
+        stage('Limpiar contenedores anteriores') {
+            steps {
+                bat "docker stop test-backend-${BUILD_NUMBER} || true"
+                bat "docker rm test-backend-${BUILD_NUMBER} || true"
+            }
+        }
+
         stage('Ejecutar contenedor de prueba') {
             steps {
-                bat "docker run -d --name test-backend-${BUILD_NUMBER} -p 3000:3000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                bat "docker run -d --name test-backend-${BUILD_NUMBER} -p 3001:3000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 bat 'timeout /t 5 /nobreak'
             }
         }
