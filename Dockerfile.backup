@@ -1,0 +1,12 @@
+FROM alpine:3.19
+
+RUN apk add --no-cache \
+    bash \
+    postgresql16-client \
+    aws-cli
+
+WORKDIR /scripts
+COPY scripts/backup.sh /scripts/backup.sh
+RUN chmod +x /scripts/backup.sh
+
+CMD ["/scripts/backup.sh"]
