@@ -32,6 +32,7 @@ jobs:
         with:
           context: .
           push: true
+          pull: true
           tags: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
 
       - name: Verify image
